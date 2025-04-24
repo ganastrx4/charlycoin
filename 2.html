@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Verificación CHC</title>
+  <script src="https://unpkg.com/@worldcoin/idkit@latest/dist/index.umd.js"></script>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    #verify-button {
+      padding: 15px 40px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 25px;
+      background-color: #00c2ff;
+      color: white;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: 0.3s ease;
+    }
+
+    #verify-button:hover {
+      background-color: #007ba7;
+    }
+
+    #verify-button::before {
+      content: "";
+      position: absolute;
+      left: -75%;
+      top: 0;
+      width: 50%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      transform: skewX(-20deg);
+      transition: left 0.5s ease;
+    }
+
+    #verify-button:hover::before {
+      left: 125%;
+    }
+  </style>
+</head>
+<body>
+
+  <button id="verify-button">Verificar con World ID</button>
+
+  <script>
+    document.getElementById('verify-button').addEventListener('click', () => {
+      // Redirige directamente al link de verificación de Worldcoin
+      window.location.href = "https://worldcoin.org/verify?t=wld&i=cd209cbb-162b-4a11-adb7-5b3b1133ed34&k=FunGjCr3o%2Fm3zlUDif7q6jbxazyCgb9K6wd4vD8YFUY%3D";
+    });
+
+    // Si el usuario ya está "verificado", redirígelo automáticamente
+    window.addEventListener('DOMContentLoaded', () => {
+      const verified = localStorage.getItem('charly_user_verified');
+      if (verified === 'true') {
+        window.location.href = "/panel"; // o cambia por tu ruta real
+      }
+    });
+  </script>
+</body>
+</html>
