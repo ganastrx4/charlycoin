@@ -48,34 +48,53 @@
     const button = document.getElementById('verify-button');
     const statusText = document.getElementById('status');
 
-    // Inicializar el widget IDKit Standalone
+    // Inicializa el widget de World ID
     const idkit = window.IDKit.init({
-      app_id: 'app_7686f9027d3e3c0b53d987a3caf1e111', // tu App ID real
-      action: 'login-chc', // nombre de la acción
-      signal: 'user_demo', // puedes reemplazar por el ID del usuario logueado
+      app_id: 'app_7686f9027d3e3c0b53d987a3caf1e111',
+      action: 'login-chc',
+      signal: 'user_demo',
       action_description: 'Verifica tu identidad con World ID',
-      verification_level: 'orb', // nivel requerido: 'orb' o 'device'
+      verification_level: 'orb',
+
+      // Enviamos la prueba al backend Flask en Render
       handleVerify: async (response) => {
-        // Aquí podrías enviar el "proof" a tu backend para verificar
-        console.log('Verificando prueba en el backend...', response);
-        // Simulación de verificación (puedes conectar un endpoint real)
-        return true;
+        try {
+          const res = await fetch('https://worldid-auth-fzky.onrender.com/api/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(response),
+          });
+
+          const result = await res.json();
+          console.log('Respuesta del backend:', result);
+
+          if (result.success) {
+            return true;
+          } else {
+            throw new Error(result.message || 'Fallo de verificación');
+          }
+        } catch (err) {
+          console.error('Error en verificación:', err);
+          throw err;
+        }
       },
+
       onSuccess: (response) => {
-        console.log('Verificación exitosa:', response);
+        console.log('✅ Verificación exitosa:', response);
         localStorage.setItem('charly_user_verified', 'true');
         statusText.textContent = '✅ Verificación exitosa. Redirigiendo...';
         setTimeout(() => {
-          window.location.href = '/panel'; // Cambia por tu URL real
+          window.location.href = '/panel';
         }, 1500);
       },
+
       onError: (error) => {
-        console.error('Error en la verificación:', error);
+        console.error('❌ Error al verificar:', error);
         statusText.textContent = '❌ Error al verificar. Intenta de nuevo.';
       }
     });
 
-    // Abrir el widget cuando el usuario haga clic
+    // Abrir el widget al hacer clic
     button.addEventListener('click', async () => {
       try {
         await idkit.open();
@@ -84,7 +103,7 @@
       }
     });
 
-    // Si ya está verificado, redirige automáticamente
+    // Redirigir si ya está verificado
     window.addEventListener('DOMContentLoaded', () => {
       const verified = localStorage.getItem('charly_user_verified');
       if (verified === 'true') {
