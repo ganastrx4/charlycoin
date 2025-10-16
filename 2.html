@@ -15,6 +15,7 @@
       font-family: sans-serif;
       color: white;
       flex-direction: column;
+      text-align: center;
     }
 
     #verify-button {
@@ -28,10 +29,12 @@
       position: relative;
       overflow: hidden;
       transition: 0.3s ease;
+      box-shadow: 0 0 15px rgba(0, 194, 255, 0.4);
     }
 
     #verify-button:hover {
       background-color: #007ba7;
+      box-shadow: 0 0 20px rgba(0, 194, 255, 0.7);
     }
 
     #status {
@@ -41,6 +44,7 @@
   </style>
 </head>
 <body>
+  <h2>Verificación CHC con World ID 🌐</h2>
   <button id="verify-button">Verificar con World ID</button>
   <div id="status"></div>
 
@@ -56,7 +60,7 @@
       action_description: 'Verifica tu identidad con World ID',
       verification_level: 'orb',
 
-      // Enviamos la prueba al backend Flask en Render
+      // Enviar prueba al backend Flask (Render)
       handleVerify: async (response) => {
         try {
           const res = await fetch('https://worldid-auth-fzky.onrender.com/api/verify', {
@@ -69,7 +73,7 @@
           console.log('Respuesta del backend:', result);
 
           if (result.success) {
-            return true;
+            return true; // Esto le dice al widget que la verificación fue exitosa
           } else {
             throw new Error(result.message || 'Fallo de verificación');
           }
@@ -79,22 +83,24 @@
         }
       },
 
+      // Éxito
       onSuccess: (response) => {
         console.log('✅ Verificación exitosa:', response);
         localStorage.setItem('charly_user_verified', 'true');
         statusText.textContent = '✅ Verificación exitosa. Redirigiendo...';
         setTimeout(() => {
-          window.location.href = '/panel';
+          window.location.href = 'https://ganastrx4.github.io/chc-flask-app-/buscador.html';
         }, 1500);
       },
 
+      // Error
       onError: (error) => {
         console.error('❌ Error al verificar:', error);
         statusText.textContent = '❌ Error al verificar. Intenta de nuevo.';
       }
     });
 
-    // Abrir el widget al hacer clic
+    // Abre el widget al hacer clic
     button.addEventListener('click', async () => {
       try {
         await idkit.open();
@@ -103,11 +109,11 @@
       }
     });
 
-    // Redirigir si ya está verificado
+    // Si el usuario ya está verificado, lo redirige directamente
     window.addEventListener('DOMContentLoaded', () => {
       const verified = localStorage.getItem('charly_user_verified');
       if (verified === 'true') {
-        window.location.href = '/panel';
+        window.location.href = 'https://ganastrx4.github.io/chc-flask-app-/buscador.html';
       }
     });
   </script>
