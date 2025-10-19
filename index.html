@@ -2,48 +2,75 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Autenticación</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bienvenido a CharlyCoin</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
-      font-family: 'Inter', sans-serif;
+      height: 100vh;
+      background: radial-gradient(circle at center, #0d1117, #000);
+      color: #fff;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      color: #fff;
-      text-align: center;
+      font-family: "Poppins", sans-serif;
+      overflow: hidden;
     }
 
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 30px;
+      font-size: 2.5em;
+      color: #00bcd4;
+      margin-bottom: 10px;
+      letter-spacing: 2px;
+      animation: fadeIn 1.5s ease-in-out;
     }
 
-    .btn {
-      padding: 15px 30px;
-      background-color: #00c9a7;
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.2rem;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      text-decoration: none;
+    h2 {
+      color: #aaa;
+      font-weight: 400;
+      animation: fadeIn 2s ease-in-out;
     }
 
-    .btn:hover {
-      background-color: #00a48c;
+    .loader {
+      border: 6px solid #222;
+      border-top: 6px solid #00bcd4;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite, fadeIn 2.5s ease-in-out;
+      margin-top: 25px;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    footer {
+      position: absolute;
+      bottom: 20px;
+      color: #555;
+      font-size: 0.9em;
+      letter-spacing: 1px;
+      animation: fadeIn 3s ease-in-out;
     }
   </style>
 </head>
 <body>
-  <h1>Autentifícate</h1>
-  <a class="btn" href="./2.html" target="_blank">Ir a la IA</a>
+  <h1>Bienvenido a CharlyCoin 🌍</h1>
+  <h2>Preparando tu experiencia...</h2>
+  <div class="loader"></div>
+  <footer>© 2025 CharlyCoin. Todos los derechos reservados.</footer>
+
+  <script>
+    setTimeout(() => {
+      window.location.href = "https://ganastrx4.github.io/chc-flask-app-/buscador.html";
+    }, 3000);
+  </script>
 </body>
 </html>
