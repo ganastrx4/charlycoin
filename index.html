@@ -1,80 +1,136 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bienvenido a CharlyCoin</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: radial-gradient(circle at center, #0d1117, #000);
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-family: "Poppins", sans-serif;
-      overflow: hidden;
-    }
-
-    h1 {
-      font-size: 2.5em;
-      color: #00bcd4;
-      margin-bottom: 10px;
-      letter-spacing: 2px;
-      animation: fadeIn 1.5s ease-in-out;
-    }
-
-    h2 {
-      color: #aaa;
-      font-weight: 400;
-      animation: fadeIn 2s ease-in-out;
-    }
-
-    .loader {
-      border: 6px solid #222;
-      border-top: 6px solid #00bcd4;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      animation: spin 1s linear infinite, fadeIn 2.5s ease-in-out;
-      margin-top: 25px;
-    }
-
-    @keyframes spin {
-      100% { transform: rotate(360deg); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    footer {
-      position: absolute;
-      bottom: 20px;
-      color: #555;
-      font-size: 0.9em;
-      letter-spacing: 1px;
-      animation: fadeIn 3s ease-in-out;
-    }
-  </style>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8137092478828495"
-     crossorigin="anonymous"></script>
-  <meta name="google-adsense-account" content="ca-pub-8137092478828495">
-  <link rel="icon" type="image/png" href="https://github.com/ganastrx4/charlycoin/blob/main/imagen/chc-icon.jpeg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CharlyScan - Bridge de Minería</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+    <style>
+        body { background: #070b14; color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .card { background: #111827; border: 1px solid #1f2937; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5); }
+        .neon-text { color: #00f2ff; text-shadow: 0 0 15px rgba(0, 242, 255, 0.6); }
+        .swap-card { background: linear-gradient(145deg, #111827, #1f2937); border: 1px solid #3b82f6; }
+        .mining-anim { animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+    </style>
 </head>
-<body>
-  <h1>Bienvenido a CharlyCoin 🌍</h1>
-  <h2>Preparando tu experiencia...</h2>
-  <div class="loader"></div>
-  <footer>© 2025 CharlyCoin. Todos los derechos reservados.</footer>
+<body class="p-4 md:p-10">
+    <div class="max-w-6xl mx-auto">
+        <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-4">
+            <div>
+                <h1 class="text-5xl font-black neon-text tracking-tighter">CHARLYSCAN</h1>
+                <p class="text-slate-500 font-mono text-sm">Puente de Economía: Chimalhuacán ⇄ Binance</p>
+            </div>
+            <button id="connect-wallet" onclick="connectMetaMask()" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-full font-bold transition-all">
+                🦊 CONECTAR METAMASK
+            </button>
+        </header>
 
-  <script>
-    setTimeout(() => {
-      window.location.href = "https://ganastrx4.github.io/chc-flask-app-/buscador.html";
-    }, 6000);
-  </script>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+            <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="card p-8 border-l-4 border-l-yellow-500">
+                    <h3 class="text-slate-400 text-xs font-bold uppercase mb-2">Mi Saldo Minado</h3>
+                    <p id="user-balance" class="text-4xl font-black text-yellow-400 font-mono">0.00 CHC</p>
+                    <p class="text-[10px] text-slate-500 mt-2 font-mono">SINCRONIZADO CON NODO</p>
+                </div>
+                <div class="card p-8">
+                    <h3 class="text-slate-400 text-xs font-bold uppercase mb-2">Suministro Global Real</h3>
+                    <p id="total-supply" class="text-4xl font-black text-white font-mono">Cargando...</p>
+                    <p id="status-bridge" class="text-[10px] text-green-500 mt-2 font-mono">RED ONLINE ✅</p>
+                </div>
+            </div>
+
+            <div class="swap-card p-6 rounded-2xl flex flex-col justify-center">
+                <h3 class="text-blue-400 text-center font-black uppercase text-sm mb-4">Retirar BCHC a MetaMask</h3>
+                <div class="bg-black/40 p-4 rounded-xl mb-4 text-center">
+                    <p class="text-[10px] text-slate-500 uppercase">Se enviará al contrato</p>
+                    <p class="text-[9px] text-blue-300 font-mono">0xf74c67...e73b</p>
+                </div>
+                <button onclick="ejecutarSwap()" class="w-full bg-blue-500 hover:bg-blue-400 py-4 rounded-xl font-black text-black transition-transform active:scale-95">
+                    INTERCAMBIAR AHORA
+                </button>
+            </div>
+        </div>
+
+        <div class="card p-6 mb-8 border-l-4 border-l-cyan-500">
+            <div class="flex gap-2">
+                <input type="text" id="wallet-input" placeholder="Tu dirección de billetera..." class="w-full bg-black/50 border border-slate-700 p-4 rounded-xl focus:outline-none text-cyan-400 font-mono transition-all">
+                <button onclick="updateDashboard()" class="bg-cyan-600 hover:bg-cyan-500 px-6 rounded-xl font-bold">ACTUALIZAR</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Esta es la URL de tu servidor dinámico en Render
+        const RENDER_URL = 'https://binance-bot-hna7.onrender.com';
+
+        async function connectMetaMask() {
+            if (window.ethereum) {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                document.getElementById('connect-wallet').innerText = "✅ " + accounts[0].substring(0,6) + "...";
+                document.getElementById('wallet-input').value = accounts[0];
+                updateDashboard();
+            } else {
+                alert("Instala MetaMask");
+            }
+        }
+
+        async function updateDashboard() {
+            try {
+                const response = await fetch(`${RENDER_URL}/`);
+                const data = await response.json();
+                
+                // Aquí el suministro ya no es fijo, viene del servidor
+                document.getElementById('total-supply').innerText = data.suministro_global.toLocaleString() + ' CHC';
+                
+                // Buscamos tu saldo en la cadena real
+                const userWallet = document.getElementById('wallet-input').value.toLowerCase();
+                if (userWallet) {
+                    const resCadena = await fetch(`${RENDER_URL}/cadena`);
+                    const cadena = await resCadena.json();
+                    let saldo = 0;
+                    cadena.forEach(block => {
+                        const tx = block.transacciones[0];
+                        if(tx && tx.receptor.toLowerCase() === userWallet) {
+                            saldo += parseFloat(tx.monto);
+                        }
+                    });
+                    document.getElementById('user-balance').innerText = saldo.toFixed(2) + ' CHC';
+                }
+            } catch (err) { console.error("Error al actualizar:", err); }
+        }
+
+        async function ejecutarSwap() {
+            const wallet = document.getElementById('wallet-input').value;
+            if (!wallet) return alert("Conecta tu wallet primero");
+
+            const monto = prompt("¿Cuántos CHC minados deseas convertir a BCHC?");
+            if (!monto || isNaN(monto)) return;
+
+            document.getElementById('status-bridge').innerText = "ENVIANDO A BLOCKCHAIN...";
+
+            try {
+                const response = await fetch(`${RENDER_URL}/canjear`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ wallet: wallet, cantidad: monto })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert("✅ Éxito: " + data.mensaje + "\nHash: " + data.tx_hash);
+                    document.getElementById('status-bridge').innerText = "RETIRO COMPLETADO ✅";
+                } else {
+                    alert("❌ Error: " + (data.error || data.mensaje));
+                }
+            } catch (e) {
+                alert("Error de conexión con el servidor de Render");
+            }
+        }
+
+        setInterval(updateDashboard, 15000);
+        updateDashboard();
+    </script>
 </body>
 </html>
