@@ -1,7 +1,8 @@
-flask
-flask-cors
+flask==3.0.0
+flask-cors==4.0.0
+web3==6.11.3
+requests==2.31.0
+gunicorn==21.2.0
 pymongo
 dnspython
 ecdsa
-requests
-gunicorn
